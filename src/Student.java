@@ -319,7 +319,8 @@ public class Student extends User implements User_action {
         System.out.println("Sign-up successful!");
     }
 
-    public void promote_to_TA(Course course) {
+    public void promote_to_TA(Object o, Course course) {
+        if(o instanceof Professor){
         if (!get_isAlreadyTA()) {
             setAlreadyTA(true);
 
@@ -338,6 +339,8 @@ public class Student extends User implements User_action {
             System.out.println("The student is already a TA.");
         }
     }
+    }
+    
     private void copy_student_data_to_TA(Teaching_Assistant ta) {
         // Copy all the fields from student to TA
         ta.set_name(this.get_name());
