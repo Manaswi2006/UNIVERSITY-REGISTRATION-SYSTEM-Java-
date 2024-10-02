@@ -1,4 +1,4 @@
-# UNIVERSITY-REGISTRATION-SYSTEM-Java-
+# UNIVERSITY-REGISTRATION-SYSTEM- 
 Robust JAVA command line application that handles Student, Professor, Administrator Registration and Functionalities including Courses Management, Complaint Management and Anonymous Feedback Management.
 
 ## OVERVIEW
@@ -76,4 +76,3 @@ In summary, the ERP System has been designed using the principles fundamental to
 7. When a new account is made by administrator, the default password is set to 'XYZ' that the student or professor can change later.
 8. For all courses, timing is given in format 'HH:mm AM/PM to HH:mm AM/PM' , and the professor will be teaching this course on every working day of the week at this time.
    
-
