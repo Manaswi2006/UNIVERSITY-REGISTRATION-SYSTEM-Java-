@@ -8,33 +8,24 @@ public class Main {
     public static void main(String[] args) throws InvalidLoginException, CourseFullException {
         Scanner scanner = new Scanner(System.in);
 
-//        System.out.println("x: "+feedbackManager);
-
         Professor profPravesh = new Professor("Prof. Pravesh Bihyani", course_catalog,complaintCatalog,feedbackManager);
         profPravesh.set_office_hours("1:00 PM to 2:00 PM");
-//        profPravesh.add_course(findCourseByCode("ECE101"));
         profPravesh.sign_up("XYZ");
 
         Professor profSamresh = new Professor("Prof. Samresh Chaterjee", course_catalog,complaintCatalog,feedbackManager);
         profSamresh.set_office_hours("2:00 PM to 3:00 PM");
-//        profSamresh.add_course(findCourseByCode("MTH101"));
         profSamresh.sign_up("XYZ");
 
         Professor profDebarka = new Professor("Prof. Debarka Sengupta", course_catalog,complaintCatalog,feedbackManager);
         profDebarka.set_office_hours("11:00 AM to 12:00 PM");
-//        profDebarka.add_course(findCourseByCode("CSE201"));
         profDebarka.sign_up("XYZ");
-
-
+        
         Professor profKirti = new Professor("Prof. Kirti Kanjilal", course_catalog,complaintCatalog,feedbackManager);
         profKirti.set_office_hours("2:00 PM to 3:00 PM");
-//        profKirti.add_course(findCourseByCode("SSH201"));
         profKirti.sign_up("XYZ");
 
         Professor profDeepak = new Professor("Prof. Deepak Prince", course_catalog,complaintCatalog,feedbackManager);
         profDeepak.set_office_hours("10:00 AM to 11:00 AM");
-//        profDeepak.add_course(findCourseByCode("SSH202"));
-//        profDeepak.add_course(findCourseByCode("SSH301"));
         profDeepak.sign_up("XYZ");
 
         add_data_for_courses(course_catalog);
@@ -80,37 +71,74 @@ public class Main {
 
         while (true) {
             System.out.println("Welcome to the University Course Registration System");
-//            System.out.println("1. LOGIN ");
-//            System.out.println("2. SIGN - IN ");
-//            String choice = scanner.nextLine();
-//            switch ()
+            System.out.println("1. LOGIN ");
+            System.out.println("2. SIGN - IN ");
+            String choice_internal = scanner.nextLine();
+            switch (choice_internal) {
+                case "2":
+                    System.out.println("1. Sign in as Student");
+                    System.out.println("2. Sign in as Professor");
+                    System.out.println("3. Sign in as Administrator");
+                    String _choice = scanner.nextLine();
+                    System.out.println("Enter email: ");
+                    String _email = scanner.nextLine();
+                    switch (_choice) {
+                        case "1": // Student Sign-up
+                            handle_student_sign_up(scanner, _email);
+                            break;
 
-            System.out.println("1. Login as Student");
-            System.out.println("2. Login as Professor");
-            System.out.println("3. Login as Administrator");
-            String choice = scanner.nextLine();
-            System.out.println("Enter email: ");
-            String email = scanner.nextLine();
+                        case "2": // Professor Sign-up
+                            handle_professor_sign_up(scanner, _email);
+                            break;
 
-            switch (choice) {
-                case "1": // Student Login
-                    handle_student_session(scanner, course_catalog, email);
+                        case "3": // Administrator Sign-up
+                            handle_administrator_sign_up(scanner, _email, userList);
+                            break;
+
+                        case "4": //To go back to Sign in or Login in
+                            break;
+
+                        default:
+                            System.out.println("Invalid choice. Please try again.");
+                    }
                     break;
+                case "1":
 
-                case "2": // Professor Login
-                    handle_professor_session(scanner, course_catalog, email);
+                    System.out.println("1. Login as Student");
+                    System.out.println("2. Login as Professor");
+                    System.out.println("3. Login as Administrator");
+                    System.out.println("4. Go back");
+                    String choice = scanner.nextLine();
+                    System.out.println("Enter email: ");
+                    String email = scanner.nextLine();
+
+                    switch (choice) {
+                        case "1": // Student Login
+                            handle_student_session(scanner, email);
+                            break;
+
+                        case "2": // Professor Login
+                            handle_professor_session(scanner, email);
+                            break;
+
+                        case "3": // Administrator Login
+                            handle_administrator_session(scanner, email);
+                            break;
+
+                        case "4": //To go back to Sign in or Login in
+                            break;
+
+                        default:
+                            System.out.println("Invalid choice. Please try again.");
+                    }
                     break;
-
-                case "3": // Administrator Login
-                    handle_administrator_session(scanner, course_catalog, email);
-                    break;
-
                 default:
-                    System.out.println("Invalid choice. Please try again.");
+                    System.out.println("Invalid choice. Please select 1 or 2");
             }
         }
     }
 
+    //Function that by defaults sets up a course catalog
     private static void add_data_for_courses(Course_Catalog _course_catalog) {
         // Semester 1
         _course_catalog.add(new Course("CSE101", "Introduction to Programming", 4, "Prof. Binod", "10:00 AM to 11:00 AM", new ArrayList<>(), "Syllabus Default", 1, "Room 101",feedbackManager));
@@ -152,22 +180,27 @@ public class Main {
         _course_catalog.add(new Course("SSH502", "Contract Theory", 2, "Prof. Ahaana Kotaraya", "10:00 AM to 11:00 AM", new ArrayList<>(), "Syllabus Default", 5, "Room 506",feedbackManager));
     }
 
+    private static void handle_student_sign_up(Scanner scanner,String email){
+        User existingUser = User.getUserByEmail(email);
+        Student student;
 
-    private static void handle_student_session(Scanner scanner,Course_Catalog _course_catalog,String email) throws InvalidLoginException, CourseFullException{
+        if(existingUser != null){
+            System.out.println("An account for this Email already exists. Please login or use another mail-id");
+        }
+        else {
+            student = new Student(email, course_catalog,complaintCatalog,feedbackManager);
+            System.out.println("Enter password: ");
+            String password = scanner.nextLine();
+            student.sign_up(password);
+        }
+    }
+    private static void handle_student_session(Scanner scanner, String email) throws InvalidLoginException, CourseFullException{
 
         User existingUser = User.getUserByEmail(email);
         Student student;
 
         if(existingUser != null){
             student = (Student) existingUser; //If the user alr exists we dont want it to instantiate a new object that is empty but rather cast it to the existing one
-        }
-        else {
-            student = new Student(email, course_catalog,complaintCatalog,feedbackManager);
-            System.out.println("Enter password: ");
-            String password = scanner.nextLine();
-            student.sign_up(password); //I have implemented that user signs in automatically
-        }
-
         System.out.println("Enter password: ");
         String password = scanner.nextLine();
         try {
@@ -372,21 +405,35 @@ public class Main {
         catch (InvalidLoginException e){
             System.out.println(e.getMessage());
         }
+        }
+        else {
+            System.out.println("Please Sign - Up first");
+        }
     }
-    private static void handle_professor_session(Scanner scanner,Course_Catalog _course_catalog, String email) throws InvalidLoginException{
 
+    private static void handle_professor_sign_up(Scanner scanner, String email){
         User existingUser = User.getUserByEmail(email);
         Professor professor;
         System.out.println("Enter password: ");
         String password = scanner.nextLine();
 
         if(existingUser != null){
-            professor = (Professor) existingUser; //If the user alr exists we don't want it to instantiate a new object that is empty but rather cast it to the existing one
+            System.out.println("Email already registered. Kindly Login / Use a different mail ID");
         }
         else {
-            professor = new Professor(email, _course_catalog,complaintCatalog,feedbackManager);
+            professor = new Professor(email, course_catalog,complaintCatalog,feedbackManager);
             professor.sign_up(password); //I have implemented that user signs in automatically
         }
+    }
+
+    private static void handle_professor_session(Scanner scanner, String email) throws InvalidLoginException{
+
+        User existingUser = User.getUserByEmail(email);
+
+        if(existingUser != null){
+            System.out.println("Enter password: ");
+            String password = scanner.nextLine();
+            Professor professor = (Professor) existingUser; //If the user alr exists we don't want it to instantiate a new object that is empty but rather cast it to the existing one
 
         try {
             if (professor.login(password)) {
@@ -520,6 +567,7 @@ public class Main {
                             System.out.println("1. View Course TAs");
                             System.out.println("2. Assign TA to a course");
                             System.out.println("3. Remove TA from a course");
+                            System.out.println("4. Go back");
                             String option_internal = scanner.nextLine();
                             switch (option_internal){
                                 case "1":
@@ -546,12 +594,17 @@ public class Main {
                                     Student student_X = findStudentByEmail(student_name_X);
                                     professor.remove_TA(student_X, course_X);
                                     break;
+                                case "4":
+                                    break;
+                                default:
+                                    System.out.println("Invalid choice, please choose an integer between 1 to 4");
                             }
                             break;
                         case "10":
                             System.out.println("Manage Feedbacks Menu: ");
                             System.out.println("1. Change Visibility of Feedbacks");
                             System.out.println("2. View Feedbacks");
+                            System.out.println("3. Go back");
                             String option_internal_4 = scanner.nextLine();
                             System.out.println("Enter the course code to manage feedback for:");
                             String courseCode = scanner.nextLine();
@@ -575,6 +628,10 @@ public class Main {
                                 case "2":
                                     professor.viewFeedback(course_U);
                                     break;
+                                case "3":
+                                    break;
+                                default:
+                                    System.out.println("Invalid choice, kindly choose integer from 1 to 3");
                             }
                             break;
                         case "11":
@@ -598,313 +655,332 @@ public class Main {
         } catch (InvalidLoginException e) {
             System.out.println(e.getMessage()); //Prints Invalid Login Message
         }
-    }
-
-    private static void handle_administrator_session(Scanner scanner,Course_Catalog _course_catalog, String email) throws InvalidLoginException, CourseFullException{
-        User existingUser = User.getUserByEmail(email);
-        Administrator administrator;
-
-        if(existingUser != null){
-            administrator = (Administrator) existingUser; //If the user alr exists we don't want it to instantiate a new object that is empty but rather cast it to the existing one
         }
         else {
-            administrator = new Administrator(email,_course_catalog,complaintCatalog);
+            System.out.println("Kindly Sign-Up first");
         }
+    }
 
-        System.out.print("Enter password: ");
-        String password = scanner.nextLine();
-        try {
-            if (administrator.login(password)) {
-                boolean session_active = true;
-                while (session_active) {
-                    System.out.println("Admin's Menu:");
-                    System.out.println("1. Manage Course Catalog");
-                    System.out.println("2. Manage Courses");
-                    System.out.println("3. Manage Student Records");
-                    System.out.println("4. Change Professors to Courses");
-                    System.out.println("5. Manage Complaints");
-                    System.out.println("6. Logout");
-                    String option = scanner.nextLine();
-                    switch (option) {
-                        case "1":
-                            System.out.println("Manage Course Catalog Menu: ");
-                            System.out.println("1. View Course Catalog");
-                            System.out.println("2. Add a Course to the Catalog");
-                            System.out.println("3. Delete a Course from the Catalog");
-                            String option_internal_AA = scanner.nextLine();
-                            switch (option_internal_AA) {
+    private static void handle_administrator_sign_up(Scanner scanner, String email, ArrayList<User> userList){
+        User existingUser = User.getUserByEmail(email);
+        Administrator administrator = new Administrator(email, course_catalog, complaintCatalog);
+        userList.add(administrator); //We don't need to ask a password or have any other sign up mechanism we just need to add it in the administrator's (here, user's list)
+    }
+
+    private static void handle_administrator_session(Scanner scanner, String email) throws InvalidLoginException, CourseFullException  {
+            User existingUser = User.getUserByEmail(email);
+            Administrator administrator;
+
+            if (existingUser != null) {
+                administrator = (Administrator) existingUser; //If the user alr exists we don't want it to instantiate a new object that is empty but rather cast it to the existing one
+                System.out.print("Enter password: ");
+                String password = scanner.nextLine();
+                try {
+                    if (administrator.login(password)) {
+                        boolean session_active = true;
+                        while (session_active) {
+                            System.out.println("Admin's Menu:");
+                            System.out.println("1. Manage Course Catalog");
+                            System.out.println("2. Manage Courses");
+                            System.out.println("3. Manage Student Records");
+                            System.out.println("4. Change Professors to Courses");
+                            System.out.println("5. Manage Complaints");
+                            System.out.println("6. Logout");
+                            String option = scanner.nextLine();
+                            switch (option) {
                                 case "1":
-                                    administrator.view_catalog();
+                                    System.out.println("Manage Course Catalog Menu: ");
+                                    System.out.println("1. View Course Catalog");
+                                    System.out.println("2. Add a Course to the Catalog");
+                                    System.out.println("3. Delete a Course from the Catalog");
+                                    System.out.println("4. Go back");
+                                    String option_internal_AA = scanner.nextLine();
+                                    switch (option_internal_AA) {
+                                        case "1":
+                                            administrator.view_catalog();
+                                            break;
+                                        case "2":
+                                            System.out.println("Enter Course Code of the new course:");
+                                            String courseCode = scanner.nextLine();
+                                            System.out.println("Enter Course Title:");
+                                            String courseTitle = scanner.nextLine();
+                                            System.out.println("Enter Credits:");
+                                            int credits = Integer.parseInt(scanner.nextLine());
+                                            System.out.println("Enter Professor Email:");
+                                            String professorEmail = scanner.nextLine();
+                                            System.out.println("Enter Timings (e.g., 4:30 PM to 6:00 PM):");
+                                            String timings = scanner.nextLine();
+                                            System.out.println("Enter Prerequisites (comma separated course codes):");
+                                            String prerequisitesInput = scanner.nextLine();
+                                            ArrayList<Course> prerequisites = new ArrayList<>();
+                                            for (String prereqCode : prerequisitesInput.split(",")) {
+                                                Course prereq = findCourseByCode(prereqCode.trim());
+                                                if (prereq != null) {
+                                                    prerequisites.add(prereq);
+                                                }
+                                            }
+                                            System.out.println("Enter Syllabus:");
+                                            String syllabus = scanner.nextLine();
+                                            System.out.println("Enter Semester:");
+                                            int semester = Integer.parseInt(scanner.nextLine());
+                                            System.out.println("Enter Location:");
+                                            String location = scanner.nextLine();
+                                            System.out.println("Enter Enrollment Limit (0 if no limit):");
+                                            int enrollmentLimit = Integer.parseInt(scanner.nextLine());
+
+                                            Course newCourse;
+                                            if (enrollmentLimit > 0) {
+                                                newCourse = new Course(courseCode, courseTitle, credits, professorEmail, timings, prerequisites, syllabus, semester, location, enrollmentLimit, feedbackManager);
+                                            } else {
+                                                newCourse = new Course(courseCode, courseTitle, credits, professorEmail, timings, prerequisites, syllabus, semester, location, feedbackManager);
+                                            }
+                                            administrator.add_course(newCourse);
+                                            break;
+                                        case "3":
+                                            System.out.println("Enter Course Code of the Course to be deleted:");
+                                            String course_code_AB = scanner.nextLine();
+                                            Course course_AB = findCourseByCode(course_code_AB);
+                                            administrator.delete_course(course_AB);
+                                            break;
+                                        case "4":
+                                            break;
+                                        default:
+                                            System.out.println("Kindly Enter a Valid option");
+                                            break;
+                                    }
                                     break;
                                 case "2":
-                                    System.out.println("Enter Course Code of the new course:");
-                                    String courseCode = scanner.nextLine();
-                                    System.out.println("Enter Course Title:");
-                                    String courseTitle = scanner.nextLine();
-                                    System.out.println("Enter Credits:");
-                                    int credits = Integer.parseInt(scanner.nextLine());
-                                    System.out.println("Enter Professor Email:");
-                                    String professorEmail = scanner.nextLine();
-                                    System.out.println("Enter Timings (e.g., 4:30 PM to 6:00 PM):");
-                                    String timings = scanner.nextLine();
-                                    System.out.println("Enter Prerequisites (comma separated course codes):");
-                                    String prerequisitesInput = scanner.nextLine();
-                                    ArrayList<Course> prerequisites = new ArrayList<>();
-                                    for (String prereqCode : prerequisitesInput.split(",")) {
-                                        Course prereq = findCourseByCode(prereqCode.trim());
-                                        if (prereq != null) {
-                                            prerequisites.add(prereq);
-                                        }
-                                    }
-                                    System.out.println("Enter Syllabus:");
-                                    String syllabus = scanner.nextLine();
-                                    System.out.println("Enter Semester:");
-                                    int semester = Integer.parseInt(scanner.nextLine());
-                                    System.out.println("Enter Location:");
-                                    String location = scanner.nextLine();
-                                    System.out.println("Enter Enrollment Limit (0 if no limit):");
-                                    int enrollmentLimit = Integer.parseInt(scanner.nextLine());
-
-                                    Course newCourse;
-                                    if (enrollmentLimit > 0) {
-                                        newCourse = new Course(courseCode, courseTitle, credits, professorEmail, timings, prerequisites, syllabus, semester, location, enrollmentLimit,feedbackManager);
-                                    } else {
-                                        newCourse = new Course(courseCode, courseTitle, credits, professorEmail, timings, prerequisites, syllabus, semester, location,feedbackManager);
-                                    }
-                                    administrator.add_course(newCourse);
-                                    break;
-                                case "3":
-                                    System.out.println("Enter Course Code of the Course to be deleted:");
-                                    String course_code_AB = scanner.nextLine();
-                                    Course course_AB = findCourseByCode(course_code_AB);
-                                    administrator.delete_course(course_AB);
-                                    break;
-                                default:
-                                    System.out.println("Kindly Enter a Valid option");
-                                    break;
-                            }
-                            break;
-                        case "2":
-                            System.out.println("Enter Course Code to Manage: ");
-                            String course_code_AC = scanner.nextLine();
-                            Course course_AC = findCourseByCode(course_code_AC);
-                            System.out.println("Course Manager Menu: ");
-                            System.out.println("1. Change Course Syllabus");
-                            System.out.println("2. Change Course Timings");
-                            System.out.println("3. Change Course Credits");
-                            System.out.println("4. Manage Course Pre-requisites");
-                            System.out.println("5. Manage Course Enrollment - Limits");
-                            String option_internal_AD = scanner.nextLine();
-                            if (course_AC != null) {
-                                switch (option_internal_AD) {
-                                    case "1":
-                                        System.out.println("Enter the new syllabus:");
-                                        String new_syllabus = scanner.nextLine();
-                                        administrator.change_course_syllabus(course_AC, new_syllabus);
-                                        break;
-                                    case "2":
-                                        System.out.println("Enter the new timings:");
-                                        String new_timings = scanner.nextLine();
-                                        administrator.change_course_timings(course_AC, new_timings);
-                                        break;
-                                    case "3":
-                                        System.out.println("Enter the new credits:");
-                                        int new_credits = scanner.nextInt();
-                                        administrator.change_course_credits(course_AC, new_credits);
-                                        break;
-                                    case "4":
-                                        System.out.println("Managing Pre-requisites Menu: ");
-                                        System.out.println("1. View Pre-requisites");
-                                        System.out.println("2. Add Pre-requisites");
-                                        System.out.println("3. Drop Pre-requisites");
-                                        String option_internal_AF = scanner.nextLine();
-                                        switch (option_internal_AF) {
+                                    System.out.println("Enter Course Code to Manage: ");
+                                    String course_code_AC = scanner.nextLine();
+                                    Course course_AC = findCourseByCode(course_code_AC);
+                                    System.out.println("Course Manager Menu: ");
+                                    System.out.println("1. Change Course Syllabus");
+                                    System.out.println("2. Change Course Timings");
+                                    System.out.println("3. Change Course Credits");
+                                    System.out.println("4. Manage Course Pre-requisites");
+                                    System.out.println("5. Manage Course Enrollment - Limits");
+                                    System.out.println("6. Go back");
+                                    String option_internal_AD = scanner.nextLine();
+                                    if (course_AC != null) {
+                                        switch (option_internal_AD) {
                                             case "1":
-                                                administrator.view_prerequisites(course_AC);
+                                                System.out.println("Enter the new syllabus:");
+                                                String new_syllabus = scanner.nextLine();
+                                                administrator.change_course_syllabus(course_AC, new_syllabus);
                                                 break;
                                             case "2":
-                                                System.out.println("Enter Course Code of the Course to be Added:");
-                                                String course_code_AB = scanner.nextLine();
-                                                Course course_AB = findCourseByCode(course_code_AB);
-                                                administrator.add_prerequisites(course_AC, course_AB);
+                                                System.out.println("Enter the new timings:");
+                                                String new_timings = scanner.nextLine();
+                                                administrator.change_course_timings(course_AC, new_timings);
                                                 break;
                                             case "3":
-                                                System.out.println("Enter Course Code of the Course to be Deleted:");
-                                                String course_code_AD = scanner.nextLine();
-                                                Course course_AD = findCourseByCode(course_code_AD);
-                                                administrator.drop_prerequisites(course_AC, course_AD);
+                                                System.out.println("Enter the new credits:");
+                                                int new_credits = scanner.nextInt();
+                                                administrator.change_course_credits(course_AC, new_credits);
+                                                break;
+                                            case "4":
+                                                System.out.println("Managing Pre-requisites Menu: ");
+                                                System.out.println("1. View Pre-requisites");
+                                                System.out.println("2. Add Pre-requisites");
+                                                System.out.println("3. Drop Pre-requisites");
+                                                String option_internal_AF = scanner.nextLine();
+                                                switch (option_internal_AF) {
+                                                    case "1":
+                                                        administrator.view_prerequisites(course_AC);
+                                                        break;
+                                                    case "2":
+                                                        System.out.println("Enter Course Code of the Course to be Added:");
+                                                        String course_code_AB = scanner.nextLine();
+                                                        Course course_AB = findCourseByCode(course_code_AB);
+                                                        administrator.add_prerequisites(course_AC, course_AB);
+                                                        break;
+                                                    case "3":
+                                                        System.out.println("Enter Course Code of the Course to be Deleted:");
+                                                        String course_code_AD = scanner.nextLine();
+                                                        Course course_AD = findCourseByCode(course_code_AD);
+                                                        administrator.drop_prerequisites(course_AC, course_AD);
+                                                        break;
+                                                    default:
+                                                        System.out.println("Kindly Enter a Valid Option");
+                                                        break;
+                                                }
+                                                break;
+                                            case "5":
+                                                System.out.println("Managing Enrollment_Limits Menu: ");
+                                                System.out.println("1. Add New Enrollment Limit");
+                                                System.out.println("2. Drop Enrollment Limit");
+                                                String option_internal_AG = scanner.nextLine();
+                                                switch (option_internal_AG) {
+                                                    case "1":
+                                                        System.out.println("Enter new Enrollment Limit: ");
+                                                        int new_limit = scanner.nextInt();
+                                                        administrator.change_enrollment_limits(course_AC, new_limit);
+                                                        break;
+                                                    case "2":
+                                                        administrator.drop_enrollment_limits(course_AC);
+                                                        break;
+                                                    default:
+                                                        System.out.println("Kindly Enter a Valid Option");
+                                                        break;
+                                                }
+                                            case "6":
                                                 break;
                                             default:
-                                                System.out.println("Kindly Enter a Valid Option");
-                                                break;
+                                                System.out.println("Invalid choice");
                                         }
-                                        break;
-                                    case "5":
-                                        System.out.println("Managing Enrollment_Limits Menu: ");
-                                        System.out.println("1. Add New Enrollment Limit");
-                                        System.out.println("2. Drop Enrollment Limit");
-                                        String option_internal_AG = scanner.nextLine();
-                                        switch (option_internal_AG) {
-                                            case "1":
-                                                System.out.println("Enter new Enrollment Limit: ");
-                                                int new_limit = scanner.nextInt();
-                                                administrator.change_enrollment_limits(course_AC, new_limit);
-                                                break;
-                                            case "2":
-                                                administrator.drop_enrollment_limits(course_AC);
-                                                break;
-                                            default:
-                                                System.out.println("Kindly Enter a Valid Option");
-                                                break;
-                                        }
-                                }
-                            } else {
-                                System.out.println("Course not found.");
-                            }
-                            break;
-                        case "3":
-                            System.out.println("Enter Student Email:");
-                            String studentEmail = scanner.nextLine();
-                            Student student = findStudentByEmail(studentEmail);
-
-                            if (student == null) return;
-
-                            while (true) {
-                                System.out.println("Manage Student Records Menu: ");
-                                System.out.println("1. View Current Courses");
-                                System.out.println("2. Add a Course");
-                                System.out.println("3. Drop a Course");
-                                System.out.println("4. View CGPA");
-                                System.out.println("5. View SGPA");
-                                System.out.println("6. View Grade for Course");
-                                System.out.println("7. View Grade for Semester");
-                                System.out.println("8. View All Grades");
-                                System.out.println("9. View Credits");
-                                System.out.println("10. View Semester");
-                                System.out.println("11. View Name");
-                                System.out.println("12. Change Name");
-                                System.out.println("13. Complete Semester");
-                                System.out.println("14. Exit");
-
-                                String option_BA = scanner.nextLine();
-
-                                switch (option_BA) {
-                                    case "1":
-                                        administrator.view_current_courses(student);
-                                        break;
-                                    case "2":
-                                        System.out.println("Enter Course Code to Add:");
-                                        String addCourseCode = scanner.nextLine();
-                                        Course addCourse = findCourseByCode(addCourseCode);
-                                        administrator.add_courses(student, addCourse);
-                                        break;
-                                    case "3":
-                                        System.out.println("Enter Course Code to Drop:");
-                                        String dropCourseCode = scanner.nextLine();
-                                        Course dropCourse = findCourseByCode(dropCourseCode);
-                                        administrator.drop_course(student, dropCourse);
-                                        break;
-                                    case "4":
-                                        administrator.view_CGPA(student);
-                                        break;
-                                    case "5":
-                                        System.out.println("Enter Semester:");
-                                        int semester = scanner.nextInt();
-                                        administrator.view_SGPA(student, semester);
-                                        scanner.nextLine();
-                                        break;
-                                    case "6":
-                                        System.out.println("Enter Course Code:");
-                                        String gradeCourseCode = scanner.nextLine();
-                                        Course gradeCourse = findCourseByCode(gradeCourseCode);
-                                        administrator.view_grade_for_course(student, gradeCourse);
-                                        break;
-                                    case "7":
-                                        System.out.println("Enter Semester:");
-                                        int sem = scanner.nextInt();
-                                        administrator.view_grade_for_sem(student, sem);
-                                        scanner.nextLine(); // Consume newline
-                                        break;
-                                    case "8":
-                                        administrator.view_all_grades(student);
-                                        break;
-                                    case "9":
-                                        System.out.println("Credits: " + administrator.view_credits(student));
-                                        break;
-                                    case "10":
-                                        System.out.println("Semester: " + administrator.view_semester(student));
-                                        break;
-                                    case "11":
-                                        System.out.println("Name: " + administrator.view_name(student));
-                                        break;
-                                    case "12":
-                                        System.out.println("Enter New Name:");
-                                        String newName = scanner.nextLine();
-                                        administrator.change_name(student, newName);
-                                        break;
-                                    case "13":
-                                        administrator.semester_completion(student);
-                                        break;
-                                    case "14":
-                                        return; // Exit
-                                    default:
-                                        System.out.println("Invalid option. Please try again.");
-                                }
-                                break;
-                            }
-                        case "4":
-                            System.out.println("Enter Course Code of the Course to be Assigned:");
-                            String course_code_AD = scanner.nextLine();
-                            Course course_AD = findCourseByCode(course_code_AD);
-                            System.out.println("Enter Professor mail id: ");
-                            String professor1 = scanner.nextLine();
-                            Professor professor = find_professor_by_email(professor1);
-                            administrator.assign_professor(professor, course_AD);
-                            break;
-                        case "5":
-                            System.out.println("Manage Complaints Menu: ");
-                            System.out.println("1. View all complaints");
-                            System.out.println("2. Change Status of a Complaint");
-                            String option_internal = scanner.nextLine();
-                            switch (option_internal) {
-                                case "1":
-                                    administrator.viewAllComplaints();
-                                    break;
-
-                                case "2":
-                                    System.out.println("Enter UUID of the complaint you want to update: ");
-                                    String complaintIdInput = scanner.nextLine();
-
-                                    try {
-                                        UUID complaintId = UUID.fromString(complaintIdInput);
-
-                                        System.out.println("Enter new status (e.g., Open, In Progress, Closed): ");
-                                        String newStatus = scanner.nextLine();
-
-                                        administrator.changeComplaintStatus(complaintId, newStatus);
-
-                                    } catch (IllegalArgumentException e) {
-                                        System.out.println("Invalid UUID format. Please try again.");
+                                    } else {
+                                        System.out.println("Course not found.");
                                     }
                                     break;
-                                default:
-                                    System.out.println("Invalid Option");
+                                case "3":
+                                    System.out.println("Enter Student Email:");
+                                    String studentEmail = scanner.nextLine();
+                                    Student student = findStudentByEmail(studentEmail);
+
+                                    if (student == null) return;
+
+                                    while (true) {
+                                        System.out.println("Manage Student Records Menu: ");
+                                        System.out.println("1. View Current Courses");
+                                        System.out.println("2. Add a Course");
+                                        System.out.println("3. Drop a Course");
+                                        System.out.println("4. View CGPA");
+                                        System.out.println("5. View SGPA");
+                                        System.out.println("6. View Grade for Course");
+                                        System.out.println("7. View Grade for Semester");
+                                        System.out.println("8. View All Grades");
+                                        System.out.println("9. View Credits");
+                                        System.out.println("10. View Semester");
+                                        System.out.println("11. View Name");
+                                        System.out.println("12. Change Name");
+                                        System.out.println("13. Complete Semester");
+                                        System.out.println("14. Go back");
+
+                                        String option_BA = scanner.nextLine();
+
+                                        switch (option_BA) {
+                                            case "1":
+                                                administrator.view_current_courses(student);
+                                                break;
+                                            case "2":
+                                                System.out.println("Enter Course Code to Add:");
+                                                String addCourseCode = scanner.nextLine();
+                                                Course addCourse = findCourseByCode(addCourseCode);
+                                                administrator.add_courses(student, addCourse);
+                                                break;
+                                            case "3":
+                                                System.out.println("Enter Course Code to Drop:");
+                                                String dropCourseCode = scanner.nextLine();
+                                                Course dropCourse = findCourseByCode(dropCourseCode);
+                                                administrator.drop_course(student, dropCourse);
+                                                break;
+                                            case "4":
+                                                administrator.view_CGPA(student);
+                                                break;
+                                            case "5":
+                                                System.out.println("Enter Semester:");
+                                                int semester = scanner.nextInt();
+                                                administrator.view_SGPA(student, semester);
+                                                scanner.nextLine();
+                                                break;
+                                            case "6":
+                                                System.out.println("Enter Course Code:");
+                                                String gradeCourseCode = scanner.nextLine();
+                                                Course gradeCourse = findCourseByCode(gradeCourseCode);
+                                                administrator.view_grade_for_course(student, gradeCourse);
+                                                break;
+                                            case "7":
+                                                System.out.println("Enter Semester:");
+                                                int sem = scanner.nextInt();
+                                                administrator.view_grade_for_sem(student, sem);
+                                                scanner.nextLine(); // Consume newline
+                                                break;
+                                            case "8":
+                                                administrator.view_all_grades(student);
+                                                break;
+                                            case "9":
+                                                System.out.println("Credits: " + administrator.view_credits(student));
+                                                break;
+                                            case "10":
+                                                System.out.println("Semester: " + administrator.view_semester(student));
+                                                break;
+                                            case "11":
+                                                System.out.println("Name: " + administrator.view_name(student));
+                                                break;
+                                            case "12":
+                                                System.out.println("Enter New Name:");
+                                                String newName = scanner.nextLine();
+                                                administrator.change_name(student, newName);
+                                                break;
+                                            case "13":
+                                                administrator.semester_completion(student);
+                                                break;
+                                            case "14":
+                                                return;
+                                            default:
+                                                System.out.println("Invalid option. Please try again.");
+                                        }
+                                        break;
+                                    }
+                                case "4":
+                                    System.out.println("Enter Course Code of the Course to be Assigned:");
+                                    String course_code_AD = scanner.nextLine();
+                                    Course course_AD = findCourseByCode(course_code_AD);
+                                    System.out.println("Enter Professor mail id: ");
+                                    String professor1 = scanner.nextLine();
+                                    Professor professor = find_professor_by_email(professor1);
+                                    administrator.assign_professor(professor, course_AD);
                                     break;
+                                case "5":
+                                    System.out.println("Manage Complaints Menu: ");
+                                    System.out.println("1. View all complaints");
+                                    System.out.println("2. Change Status of a Complaint");
+                                    System.out.println("3. Go back");
+                                    String option_internal = scanner.nextLine();
+                                    switch (option_internal) {
+                                        case "1":
+                                            administrator.viewAllComplaints();
+                                            break;
+
+                                        case "2":
+                                            System.out.println("Enter UUID of the complaint you want to update: ");
+                                            String complaintIdInput = scanner.nextLine();
+
+                                            try {
+                                                UUID complaintId = UUID.fromString(complaintIdInput);
+
+                                                System.out.println("Enter new status (e.g., Open, In Progress, Closed): ");
+                                                String newStatus = scanner.nextLine();
+
+                                                administrator.changeComplaintStatus(complaintId, newStatus);
+
+                                            } catch (IllegalArgumentException e) {
+                                                System.out.println("Invalid UUID format. Please try again.");
+                                            }
+                                            break;
+                                        case "3":
+                                            break;
+                                        default:
+                                            System.out.println("Invalid Option");
+                                            break;
+                                    }
+                                    break;
+                                case "6":
+                                    administrator.logout();
+                                    session_active = false;
+                                    break;
+                                default:
+                                    System.out.println("Invalid option. Try again.");
                             }
-                            break;
-                        case "6":
-                            administrator.logout();
-                            session_active = false;
-                            break;
-                        default:
-                            System.out.println("Invalid option. Try again.");
+                        }
                     }
+                } catch (InvalidLoginException e) {
+                    System.out.println(e.getMessage()); //Prints Invalid Login Message
                 }
-            }
+            } else {
+            System.out.println("Please Sign - Up first");
         }
-        catch (InvalidLoginException e) {
-        System.out.println(e.getMessage()); //Prints Invalid Login Message
-        }
+
     }
     private static Course findCourseByCode(String course_code) {
         for (Course course : course_catalog.get_courses()) {
