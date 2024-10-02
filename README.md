@@ -81,22 +81,22 @@ In summary, the ERP System has been designed using the principles fundamental to
 ## CODE DESIGN
 ### INCORPORATION OF EXCEPTION HANDLING
 
-#### InvalidLoginException
+#### 1. InvalidLoginException
 In case the user adds incorrect password, an exception is thrown that sends the message "Incorrect password, please try again".
 
-#### CourseFullException
+#### 2. CourseFullException
 In case the enrollment limit is reached (if it exists), when a student tries to register for it, a message "Enrollment limit reached is sent"
 
-#### DropDeadlineException
+#### 3. DropDeadlineException
 In case the DropDeadline that is managed by the administrators is passed, When a student tries to drop a course a message that "Drop Deadline has passed" is sent
 It’s managed by the isDropDeadlinePassed method, which checks the current date against dropDeadline.
 
 ### INCORPORATION OF GENERIC PROGRAMMING
 
-#### GENERIC FEEDBACK SYSTEM
+#### 1. GENERIC FEEDBACK SYSTEM
 In this system, the feedback can be either an Integer between 1 to 5 or a textual statement. My feedback therefore has three attributes, the generic feedback, the student who gave it and the course which for the feedback is given.
 
-#### GENERIC REGISTRATION SYSTEM
+#### 2. GENERIC REGISTRATION SYSTEM
 I have two systems : Course Registration System and Complaint Registration System that is managed by an abstract Registration System Class that contains an arraylist of Generics and has methods view, add and drop.
 
 ### INCORPORATION OF OBJECT CLASS
