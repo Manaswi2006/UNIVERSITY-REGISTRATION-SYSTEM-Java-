@@ -20,22 +20,6 @@ public class Course {
     private ArrayList<Teaching_Assistant> TAs= new ArrayList<>();
     private boolean Anonymous_Feedback = false;
 
-//    public Course(String _course_code, String _course_title, int _credits, String _timings,
-//                  ArrayList<Course> _prerequisites, String _syllabus, int _sem, String _location) {
-//        this.course_code = _course_code;
-//        this.course_title = _course_title;
-//        this.credits = _credits;
-//        this.professor = find_professor_by_email(_professor);
-//        this.timings = _timings;
-//        this.prerequisites = _prerequisites;
-//        this.syllabus = _syllabus;
-//        this.sem = _sem;
-//        this.location = _location;
-//        this.current_students = new ArrayList<>();
-//        this.enrollment_limit_exists = false; // No enrollment limit by default
-//        professor.add_current_courses(this);
-//        //this.course_catalog = course_catalog;
-//    }
     // Constructor with enrollment limit
     public Course(String _course_code, String _course_title, int _credits, String _professor, String _timings,
                   ArrayList<Course> _prerequisites, String _syllabus, int _sem, String _location, int _enrollment_limit,Feedback_Manager feedbackmanager) {
@@ -228,11 +212,11 @@ public class Course {
 
     // Method to drop a student from the course
     public void drop_current_student(Student student) {
-        if (student != null && get_current_students().contains(student)) {
+        if (student != null) {
             this.current_students.remove(student);
             number_of_enrolled_students--;
         } else {
-            System.out.println("Student is not enrolled in this course or is null.");
+            System.out.println("Student is null.");
         }
     }
 
