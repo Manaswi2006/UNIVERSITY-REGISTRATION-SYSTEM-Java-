@@ -290,4 +290,16 @@ public class Administrator extends User implements Course_Manager, Grade_Manager
         }
         System.out.println("Complaint not found for ID: " + complaintId);
     }
+
+    public void sign_up() {
+        // Check if the user already exists
+        for (User user : get_userList()) {
+            if (user.get_email().equals(get_email())) {
+                System.out.println("User already signed up!");
+                return;
+            }
+        }
+        userList.add(this);
+        System.out.println("Sign-up successful!");
+    }
 }
