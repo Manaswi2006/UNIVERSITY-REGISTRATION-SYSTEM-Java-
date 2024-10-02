@@ -1,0 +1,234 @@
+@startuml
+
+abstract class Registration_system<T> {
+    +view()
+    +add(item: T)
+    +delete(item: T)
+}
+
+class User {
+    #email: String
+    #password: String
+    #course_catalog : Course_Catalog
+    #complaintComplaint : Complaint_Catalog
+    #userList : ArrayList<User>
+    +get_email(): String
+    #get_password():String
+    -set_password(new_password: String)
+    +get_course_catalog(): Course_Catalog
+    +set_course_catalog(_course_catalog:Course_Catalog )
+    +get_complaint_catalog() : Complaint_Catalog
+    +set_complaint_catalog(complaintCatalog : Complaint_Catalog )
+    +get_userList(): ArrayList<User>
+    +set_userList(_userList : ArrayList<User>)
+    +login(email: String, password: String): boolean
+    +logout()
+    +getUserByEmail(email : String): User
+}
+
+
+class Student {
+    -CGPA : float
+    -name : String
+    -current_credits : int
+    -current_semester : int
+    -current_courses: ArrayList<Course>
+    -completed_courses: HashMap<Course, Float>
+    +view_current_courses()
+    +view_available_courses()
+    +add_course(course: Course)
+    +drop_course(course: Course)
+    +view_schedule()
+    +view_academic_progress()
+    +view_CGPA()
+    +view_SGPA(semester : int)
+    +view_grade_for_course(course : Course)
+    +view_semester_wise_grades(semester : int)
+    +view_all_grades()
+    +issueComplaint(Description : String)
+    +viewComplaint(complaintId : UUID)
+    +sign_up(password : String)
+    +reset_password(old_password : String , new_password : String)
+}
+
+' Define the Professor class
+class Professor {
+    -office_hours : String
+    -course_catalog : Course_Catalog
+    -current_courses: ArrayList<Course>
+    -office_hours: String
+    +view_courses()
+    +change_course_syllabus(course : Course , new_syllabus : String)
+    +change_course_timings(course : Course , new_timings : String)
+    +change_course_credits(course : Course , new_credits : int)
+    +add_prerequisites(course : Course , new_course : Course)
+    +drop_prerequisites(course : Course , old_prerequisite : Course)
+    +view_prerequisites(course : Course)
+    +change_enrollment_limits (course : Course , new_enrollment_limit : int)
+    +drop_enrollment_limits (course : Course)
+    +change_office_hours(new_timings : String)
+    +add_course(new_course : Course)
+    +drop_course(old_course : Course)
+    +view_enrolled_students(course: Course)
+    +sign_up(password : String)
+    +reset_password(old_password : String , new_password : String)
+}
+
+
+class Administrator {
+    +view_catalog()
+    +add_course(course : Course)
+    +delete_course(course : Course)
+    +change_course_syllabus(course : Course , new_syllabus : String)
+    +change_course_timings(course : Course, new_timings : String)
+    +change_course_credits(course : course , new_credits : int)
+    +add_prerequisites(course : Course , new_course : Course)
+    +drop_prerequisites(course : Course , old_prerequisite : Course)
+    +view_prerequisites(course : Course)
+    +change_enrollment_limits(course : Course , new_enrollment_limit : int)
+    +drop_enrollment_limits(course : Course)
+    +view_current_courses(student : Student)
+    +add_courses(student : Student, course : Course)
+    +drop_course(student : Student , course : Course)
+    +view_CGPA(student : Student)
+    +view_SGPA(student : Student , semester : int)
+    +view_grade_for_course(student : Student , course : Course)
+    +view_grade_for_sem(student : Student , semester : int)
+    +view_all_grades(student : Student)
+    +view_credits(student : Student)
+    +view_semester(student : Student)
+    +view_name(student : Student)
+    +change_name(student : Student, new_name : String)
+    +calculate_CGPA(student: Student)
+    -professor_is_available(professor : Professor, new_course : Course)
+    -time_conflict(start1 : String , end1 : String , start2 : String , end2 : String )
+    +assign_professor(professor : Professor, course : Course)
+    +semester_completion(student: Student)
+    +viewAllComplaints()
+    +changeComplaintStatus(complaintId : UUID , newStatus : String)
+}
+
+class Complaint {
+    -complaintId: UUID
+    -Description: String
+    -status: String
+    -issueTime: LocalDateTime
+    +toString() : String
+    +get_complaintId(): UUID
+    +get_description(): String
+    +get_status(): String
+    +set_status(status: String)
+    +get_issue_time(): LocalDateTime
+}
+
+
+class Complaint_Catalog {
+    -complaints: ArrayList<Complaint>
+    +get_complaints(): ArrayList<Complaint>
+    +set_complaints(complaints: ArrayList<Complaint>)
+    +view()
+    +add(complaint: Complaint)
+    +delete(complaint: Complaint)
+}
+
+
+class Course {
+    -course_code: String
+    -course_title: String
+    -credits: int
+    -professor: Professor
+    -timings: String
+    -prerequisites: ArrayList<Course>
+    -syllabus: String
+    -enrollment_limit_exists: boolean
+    -enrollment_limit: Integer
+    -sem: int
+    -current_students: ArrayList<Student>
+    -location: String
+    -number_of_enrolled_students: int
+    +get_course_code(): String
+    +get_course_title(): String
+    +set_course_title(new_title: String)
+    +get_credits(): int
+    +set_credits(new_credits: int)
+    +get_professor(): Professor
+    +set_professor(new_professor: Professor)
+    +get_timings(): String
+    +set_timings(new_timings: String)
+    +get_prerequisites(): ArrayList<Course>
+    +add_prerequisites(prereq: Course)
+    +drop_prerequisites(prereq: Course)
+    +view_prerequisites()
+    +get_syllabus(): String
+    +set_syllabus(new_syllabus: String)
+    +get_enrollment_limit_exists(): boolean
+    +set_enrollment_limit_exists(exists: boolean)
+    +get_enrollment_limit(): int
+    +set_enrollment_limit(new_enrollment_limit: int)
+    +drop_enrollment_limit()
+    +get_sem(): int
+    +set_sem(new_sem: int)
+    +get_location(): String
+    +set_location(new_location: String)
+    +get_current_students(): ArrayList<Student>
+    +add_current_student(student: Student)
+    +drop_current_student(student: Student)
+    +print_course_details()
+}
+
+class Course_Catalog {
+    -courses: ArrayList<Course>
+    +get_courses(): ArrayList<Course>
+    +set_courses(courses: ArrayList<Course>)
+    +view()
+    +add(course: Course)
+    +delete(course: Course)
+}
+
+interface Course_Manager {
+    +change_course_syllabus(course: Course, new_syllabus: String)
+    +change_course_timings(course: Course, new_timings: String)
+    +change_course_credits(course: Course, new_credits: int)
+    +add_prerequisites(course: Course, new_course: Course)
+    +drop_prerequisites(course: Course, old_prerequisite: Course)
+    +view_prerequisites(course: Course)
+    +change_enrollment_limits(course: Course, new_enrollment_limit: int)
+    +drop_enrollment_limits(course: Course)
+}
+
+interface User_action {
+    +sign_up(password : String)
+    +reset_password(old_password : String , new_password : String)
+}
+
+class TimeParser {
+    +convert_to_24_hour_format(time: String): String
+    +get_timings(timing_input: String): String[]
+}
+
+class Main {
+    +main(args: String[]): void
+}
+
+' Class Relationships
+User <|-- Student
+User <|-- Professor
+User <|-- Administrator
+
+Registration_system <|-- Complaint_Catalog
+Registration_system <|-- Course_Catalog
+
+User_action <|.. Professor
+User_action <|.. Student
+Course_Manager <|.. Professor
+Course_Manager <|.. Administrator
+
+Complaint_Catalog "1" -- "0..*" Complaint : manages many complaints (one to many) >
+Course_Catalog "1" -- "0..*" Course : manages many course (one to many) >
+Course "1" -- "0..*" Student : many students can enroll to many courses (many to many) >
+Professor "1" -- "0..*" Course : teaches > : one professor teaches many courses >
+
+Administrator ..> Student : manages attributes (many to many) >
+Administrator ..> Professor : manages attributes (many to many) >
+Administrator "1" *-- "1" TimeParser : composed in administrator (many to one) >
+@enduml
