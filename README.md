@@ -1,4 +1,4 @@
-# UNIVERSITY-REGISTRATION-SYSTEM- 
+# UNIVERSITY-REGISTRATION-SYSTEM
 Robust JAVA command line application that handles Student, Professor, Administrator Registration and Functionalities including Courses Management, Complaint Management and Anonymous Feedback Management.
 
 ## OVERVIEW
