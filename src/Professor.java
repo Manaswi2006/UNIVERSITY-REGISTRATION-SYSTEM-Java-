@@ -191,7 +191,7 @@ public class Professor extends User implements Course_Manager, User_action{
         if (this.get_current_courses().contains(course)) {
             if (student.get_completed_courses().containsKey(course)) {
                 if (student.get_completed_courses().get(course) >= 8) {
-                    student.promote_to_TA(course);
+                    student.promote_to_TA(this,course);
                 } else {
                     System.out.println("Student has GPA of less than 8 in this course and therefore cannot take it");
                 }
