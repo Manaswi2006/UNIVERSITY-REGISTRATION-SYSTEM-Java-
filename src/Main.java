@@ -1,7 +1,8 @@
 import java.util.*; //we will use ArrayList and Scanner
+import java.text.SimpleDateFormat;
 
 public class Main {
-    private static long dropDeadline;
+    private static Date dropDeadline;
     static Course_Catalog course_catalog = new Course_Catalog(); //course_catalog = new ArrayList<Course>();
     static Complaint_Catalog complaintCatalog = new Complaint_Catalog();
     static Feedback_Manager feedbackManager = new Feedback_Manager();
@@ -19,7 +20,7 @@ public class Main {
         Professor profDebarka = new Professor("Prof. Debarka Sengupta", course_catalog,complaintCatalog,feedbackManager);
         profDebarka.set_office_hours("11:00 AM to 12:00 PM");
         profDebarka.sign_up("XYZ");
-        
+
         Professor profKirti = new Professor("Prof. Kirti Kanjilal", course_catalog,complaintCatalog,feedbackManager);
         profKirti.set_office_hours("2:00 PM to 3:00 PM");
         profKirti.sign_up("XYZ");
@@ -64,10 +65,15 @@ public class Main {
         Administrator admin1 = new Administrator("admin1@example.com", course_catalog,complaintCatalog);
         Administrator admin2 = new Administrator("admin2@example.com", course_catalog,complaintCatalog);
 
-        // Admins don't need to sign in already have a preset password and will just get added to userList
-        ArrayList<User> userList = new ArrayList<>();
-        userList.add(admin1);
-        userList.add(admin2);
+        admin2.sign_up();
+        admin1.sign_up();
+
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy, hh:mm a");
+            dropDeadline = sdf.parse("02 OCT 2024, 04:00 PM");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         while (true) {
             System.out.println("Welcome to the University Course Registration System");
@@ -92,7 +98,7 @@ public class Main {
                             break;
 
                         case "3": // Administrator Sign-up
-                            handle_administrator_sign_up(scanner, _email, userList);
+                            handle_administrator_sign_up(scanner, _email);
                             break;
 
                         case "4": //To go back to Sign in or Login in
@@ -205,7 +211,6 @@ public class Main {
         String password = scanner.nextLine();
         try {
             if (student.login(password)) {
-                dropDeadline = System.currentTimeMillis() + 120000; // 120 seconds from login
                 boolean session_active = true;
                 while (session_active) {
                     System.out.println("Student Menu:");
@@ -661,18 +666,21 @@ public class Main {
         }
     }
 
-    private static void handle_administrator_sign_up(Scanner scanner, String email, ArrayList<User> userList){
+    private static void handle_administrator_sign_up(Scanner scanner, String email){
         User existingUser = User.getUserByEmail(email);
-        Administrator administrator = new Administrator(email, course_catalog, complaintCatalog);
-        userList.add(administrator); //We don't need to ask a password or have any other sign up mechanism we just need to add it in the administrator's (here, user's list)
+        if(existingUser != null){
+            System.out.println("Email already registered. Kindly Login / Use a different mail ID");
+        }
+        else {
+            Administrator administrator = new Administrator(email, course_catalog, complaintCatalog);
+            administrator.sign_up(); //We don't need to ask a password or have any other sign up mechanism we just need to add it in the administrator's (here, user's list)
+        }
     }
 
     private static void handle_administrator_session(Scanner scanner, String email) throws InvalidLoginException, CourseFullException  {
             User existingUser = User.getUserByEmail(email);
-            Administrator administrator;
-
             if (existingUser != null) {
-                administrator = (Administrator) existingUser; //If the user alr exists we don't want it to instantiate a new object that is empty but rather cast it to the existing one
+                Administrator administrator = (Administrator) existingUser; //If the user alr exists we don't want it to instantiate a new object that is empty but rather cast it to the existing one
                 System.out.print("Enter password: ");
                 String password = scanner.nextLine();
                 try {
@@ -685,7 +693,8 @@ public class Main {
                             System.out.println("3. Manage Student Records");
                             System.out.println("4. Change Professors to Courses");
                             System.out.println("5. Manage Complaints");
-                            System.out.println("6. Logout");
+                            System.out.println("6. Set Drop Deadline");
+                            System.out.println("7. Logout");
                             String option = scanner.nextLine();
                             switch (option) {
                                 case "1":
@@ -966,6 +975,17 @@ public class Main {
                                     }
                                     break;
                                 case "6":
+                                    try {
+                                        System.out.println("Enter new drop deadline in format (dd MMM yyyy, hh:mm a): ");
+                                        String newDeadlineStr = scanner.nextLine();
+                                        SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy, hh:mm a");
+                                        dropDeadline = sdf.parse(newDeadlineStr);
+                                        System.out.println("Drop deadline successfully updated to: " + sdf.format(dropDeadline));
+                                    } catch (Exception e) {
+                                        System.out.println("Invalid date format. Please try again.");
+                                    }
+                                    break;
+                                case "7":
                                     administrator.logout();
                                     session_active = false;
                                     break;
@@ -1024,7 +1044,8 @@ public class Main {
     }
 
     private static boolean isDropDeadlinePassed() {
-        return System.currentTimeMillis() > dropDeadline;
+        Date currentDate = new Date();
+        return currentDate.after(dropDeadline);
     }
 
     private static void submitFeedbackCLI(Student student, Scanner scanner) {
