@@ -78,17 +78,7 @@ public class User  {
             throw new InvalidLoginException("Incorrect password. Please try again.");
         }
 
-        // For other users, sign them up with the provided password
-        set_password(password); //first set up its password
-        userList.add(this); //then add it to the userlist
-        System.out.println("User signed up successfully! You can now use your account.");
-        return true;
-    }
-
-
-    // Logout method (Exit to home page)
-    public void logout() {
-        System.out.println("Logged out. Returning to home page...");
+        return false;
     }
 
 
